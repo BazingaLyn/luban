@@ -8,12 +8,49 @@
     <artifactId>luban</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
     <modules>
         <module>luban-core</module>
         <module>luban-registry</module>
         <module>luban-example</module>
         <module>luban-test</module>
     </modules>
+
+
+    <properties>
+        <curator.version>4.0.1</curator.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.luban</groupId>
+                <artifactId>luban-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.luban</groupId>
+                <artifactId>luban-example</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.luban</groupId>
+                <artifactId>luban-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.luban</groupId>
+                <artifactId>luban-registry</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>

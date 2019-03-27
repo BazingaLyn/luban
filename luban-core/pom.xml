@@ -12,4 +12,12 @@
     <artifactId>luban-core</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>org.luban</groupId>
+            <artifactId></artifactId>
+        </dependency>
+    </dependencies>
+
+
 </project>
