@@ -17,6 +17,10 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
+        <dependency>
+            <groupId>org.luban</groupId>
+            <artifactId>luban-registry</artifactId>
+        </dependency>
     </dependencies>
 
 

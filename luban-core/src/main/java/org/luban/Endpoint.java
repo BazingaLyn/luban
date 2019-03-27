@@ -1,4 +1,4 @@
-package org.luban.core;
+package org.luban;
 
 public interface Endpoint {
 

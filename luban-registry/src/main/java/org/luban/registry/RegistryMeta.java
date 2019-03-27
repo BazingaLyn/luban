@@ -1,4 +1,4 @@
-package com.luban.registry;
+package org.luban.registry;
 
 import org.luban.meta.ServiceMeta;
 

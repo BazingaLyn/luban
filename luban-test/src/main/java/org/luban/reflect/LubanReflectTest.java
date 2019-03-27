@@ -9,7 +9,7 @@ public class LubanReflectTest {
     @Test
     public void test01(){
 
-        Method[] methods = LubanReflect.class.getMethods();
+        Method[] methods = com.luban.reflect.LubanReflect.class.getMethods();
         for (int i = 0; i < methods.length; i++) {
         }
     }

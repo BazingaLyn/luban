@@ -1,4 +1,4 @@
-package com.luban.registry;
+package org.luban.registry;
 
 public interface RegistryService {
 
@@ -6,6 +6,6 @@ public interface RegistryService {
     void registerService(RegistryMeta registryMeta);
 
 
-    SubscribeResult subscribeService(SubscribeMeta subscribeMeta);
+    void subscribeService(SubscribeMeta subscribeMeta);
 
 }

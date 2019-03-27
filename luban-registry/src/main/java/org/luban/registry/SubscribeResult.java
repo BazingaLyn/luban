@@ -1,4 +1,4 @@
-package com.luban.registry;
+package org.luban.registry;
 
 import java.util.List;
 
@@ -30,6 +30,16 @@ public class SubscribeResult {
         private String host;
 
         private int port;
+
+        private int weight;
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
 
         public String getHost() {
             return host;
