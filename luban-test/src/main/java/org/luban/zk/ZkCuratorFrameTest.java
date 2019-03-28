@@ -20,9 +20,9 @@ public class ZkCuratorFrameTest {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 5);
 
         curatorFramework = CuratorFrameworkFactory.builder()
-                .connectString("127.0.0.1:2181").sessionTimeoutMs(5000)
+                .connectString("192.168.1.58:2181").sessionTimeoutMs(5000)
                 .retryPolicy(retryPolicy)
-//                .namespace("/")
+                .namespace("luban")
                 .build();
 
         curatorFramework.start();
@@ -35,7 +35,7 @@ public class ZkCuratorFrameTest {
 
     @Test
     public void test01() throws Exception {
-        String s = curatorFramework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/hello-world");
+        String s = curatorFramework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/aegis/hello-world");
         System.out.println(s);
     }
 
@@ -43,7 +43,7 @@ public class ZkCuratorFrameTest {
 
     @Test
     public void test02() throws Exception {
-        curatorFramework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/smile-hello","hello-bazinga".getBytes());
+        curatorFramework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/aegis/smile-hello","hello-bazinga".getBytes());
     }
 
 

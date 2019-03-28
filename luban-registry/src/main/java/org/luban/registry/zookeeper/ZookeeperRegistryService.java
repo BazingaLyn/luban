@@ -6,11 +6,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
-import org.luban.meta.ServiceMeta;
-import org.luban.registry.RegistryMeta;
-import org.luban.registry.RegistryService;
-import org.luban.registry.SubscribeMeta;
-import org.luban.registry.SubscribeResult;
+import org.luban.registry.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +25,7 @@ public class ZookeeperRegistryService implements RegistryService {
 
     static final int SESSION_OUTTIME = 5000;// ms
 
-    String DEFAULT_NAMESPACE = "/luban";
+    String DEFAULT_NAMESPACE = "luban";
 
     private Map<String,List<SubscribeResult>> subscribeResultMap = new ConcurrentHashMap<String, List<SubscribeResult>>(128);
 
@@ -66,11 +62,11 @@ public class ZookeeperRegistryService implements RegistryService {
 
     public void registerService(RegistryMeta registryMeta) {
 
-        String group = registryMeta.getGroup();
         int port = registryMeta.getPort();
         String ip = registryMeta.getIp();
         if(registryMeta.getServiceMetaList()!=null && registryMeta.getServiceMetaList().size()>0){
             for(ServiceMeta serviceMeta:registryMeta.getServiceMetaList()){
+                String group = serviceMeta.getGroup();
                 String completeRegistryServiceName = String.format("/%s/%s/%s:%s/%s",group,serviceMeta.getServiceName(),ip,port,serviceMeta.getWeight());
                 try {
                     Stat stat = client.checkExists().forPath(completeRegistryServiceName);
@@ -94,6 +90,7 @@ public class ZookeeperRegistryService implements RegistryService {
         try{
 
             List<String> childServiceMetas = client.getChildren().forPath(serviceParentPath);
+
 
         }catch (Exception e){
 

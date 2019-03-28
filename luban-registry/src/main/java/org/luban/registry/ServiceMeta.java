@@ -1,4 +1,4 @@
-package org.luban.meta;
+package org.luban.registry;
 
 /**
  * @author liguolin
@@ -8,6 +8,8 @@ public class ServiceMeta {
 
     private String serviceName;
 
+    private String group;
+
     private int weight;
 
     public int getWeight() {
@@ -16,6 +18,14 @@ public class ServiceMeta {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public String getServiceName() {

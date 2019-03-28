@@ -1,4 +1,70 @@
 package org.luban.transports;
 
-public class LubanRpcNettyServer {
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.luban.Endpoint;
+import org.luban.transports.decoder.RpcDecoder;
+import org.luban.transports.encoder.RpcEncoder;
+import org.luban.transports.handler.RpcServerHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author liguolin
+ * 2019-03-28 16:48:58
+ */
+public class LubanRpcNettyServer implements Endpoint {
+
+    private Logger logger  = LoggerFactory.getLogger(LubanRpcNettyServer.class);
+
+    private int port;
+
+    private ServerBootstrap serverBootstrap;
+    private EventLoopGroup boss;
+    private EventLoopGroup worker;
+
+    private int workerNum = Runtime.getRuntime().availableProcessors() << 1;
+
+    public LubanRpcNettyServer(int port){
+        this.port = port;
+        init();
+    }
+
+    @Override
+    public void init() {
+        serverBootstrap = new ServerBootstrap();
+        boss = new NioEventLoopGroup(1);
+        worker = new NioEventLoopGroup(workerNum);
+        serverBootstrap.group(boss,worker);
+        serverBootstrap.channel(NioServerSocketChannel.class);
+    }
+
+    @Override
+    public void start() {
+        serverBootstrap.localAddress(port);
+
+        serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                ch.pipeline().addLast(new RpcEncoder());
+                ch.pipeline().addLast(new RpcDecoder());
+                ch.pipeline().addLast(new RpcServerHandler());
+            }
+        });
+        try {
+            this.serverBootstrap.bind().sync();
+        } catch (InterruptedException e) {
+            logger.error("LubanRpcNettyServer start server failed",e);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        boss.shutdownGracefully();
+        worker.shutdownGracefully();
+    }
 }

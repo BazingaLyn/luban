@@ -19,7 +19,12 @@
         </dependency>
         <dependency>
             <groupId>org.luban</groupId>
-            <artifactId>luban-registry</artifactId>
+            <artifactId>luban-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
         </dependency>
     </dependencies>
 
