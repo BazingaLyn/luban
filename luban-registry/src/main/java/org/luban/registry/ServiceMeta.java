@@ -12,6 +12,16 @@ public class ServiceMeta {
 
     private int weight;
 
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public int getWeight() {
         return weight;
     }

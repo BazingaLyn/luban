@@ -10,13 +10,24 @@ public class SubscribeMeta {
 
     private String serviceName;
 
+    private String version;
+
     public SubscribeMeta(){
 
     }
 
-    public SubscribeMeta(String group, String serviceName) {
+    public SubscribeMeta(String group, String serviceName, String version) {
         this.group = group;
         this.serviceName = serviceName;
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getGroup() {

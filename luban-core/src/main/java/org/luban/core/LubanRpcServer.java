@@ -3,9 +3,9 @@ package org.luban.core;
 import org.luban.Endpoint;
 import org.luban.annotation.RpcService;
 import org.luban.exception.ServiceHasMultiInstantiationException;
-import org.luban.registry.ServiceMeta;
 import org.luban.registry.RegistryMeta;
 import org.luban.registry.RegistryService;
+import org.luban.registry.ServiceMeta;
 import org.luban.registry.zookeeper.ZookeeperRegistryService;
 import org.luban.transports.LubanRpcNettyServer;
 import org.luban.utils.NetUtil;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.luban.common.LubanCommon.DEFAULT_GROUP;
-import static org.luban.common.LubanCommon.DEFAULT_SERVICE_WEIGHT;
-import static org.luban.common.LubanCommon.DEFAULT_VERSION;
+import static org.luban.constant.LubanCommon.DEFAULT_GROUP;
+import static org.luban.constant.LubanCommon.DEFAULT_SERVICE_WEIGHT;
+import static org.luban.constant.LubanCommon.DEFAULT_VERSION;
 
 /**
  * @author liguolin
@@ -58,7 +58,6 @@ public class LubanRpcServer implements Endpoint,RpcServer {
     }
 
     public void shutdown() {
-
     }
 
     public void publishService(Object o) {
@@ -86,6 +85,7 @@ public class LubanRpcServer implements Endpoint,RpcServer {
             serviceMeta.setServiceName(serviceName);
             serviceMeta.setGroup(group);
             serviceMeta.setWeight(weight);
+            serviceMeta.setVersion(version);
 
             String serviceNameUnique = String.format("%s-%s-%s",group,serviceName,version);
             Object currentService = serviceContainer.get(serviceNameUnique);

@@ -9,17 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>luban-registry</artifactId>
+    <artifactId>luban-common</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.luban</groupId>
-            <artifactId>luban-common</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

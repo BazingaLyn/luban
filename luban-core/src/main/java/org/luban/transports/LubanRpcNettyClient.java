@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.luban.Endpoint;
+import org.luban.rpc.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,5 +67,12 @@ public class LubanRpcNettyClient implements Endpoint {
     @Override
     public void shutdown() {
         worker.shutdownGracefully();
+    }
+
+    public Object invokeSync(String host, int port, RpcRequest request, int timeoutMillis) {
+        logger.info("invoke sync host {} port {} request is {} timeout millis is {}",host,port,request,timeoutMillis);
+        String url = String.format("%s:%s",host,port);
+        Channel availableChannel = getAvailableChannel(url);
+        return null;
     }
 }
