@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.luban.constant.LubanCommon.DEFAULT_GROUP;
-import static org.luban.constant.LubanCommon.DEFAULT_SERVICE_WEIGHT;
-import static org.luban.constant.LubanCommon.DEFAULT_VERSION;
+import static org.luban.constant.LubanCommon.*;
 
 /**
  * @author liguolin
@@ -36,8 +34,8 @@ public class LubanRpcServer implements Endpoint,RpcServer {
     private int serverPort;
     private String registryAddress;
     private String ip;
+    private RpcProviderService rpcProviderService;
 
-    private Map<String,Object> serviceContainer = new ConcurrentHashMap<String, Object>();
 
     public LubanRpcServer(int serverPort,String registryAddress){
         this.serverPort = serverPort;
@@ -49,15 +47,16 @@ public class LubanRpcServer implements Endpoint,RpcServer {
     public void init() {
         this.ip = NetUtil.getLocalAddress();
         registryService = new ZookeeperRegistryService(this.registryAddress);
-
+        rpcProviderService = new RpcProviderService();
+        lubanRpcNettyServer = new LubanRpcNettyServer(serverPort,rpcProviderService);
     }
 
     public void start() {
-
-
+        lubanRpcNettyServer.start();
     }
 
     public void shutdown() {
+        lubanRpcNettyServer.shutdown();
     }
 
     public void publishService(Object o) {
@@ -87,12 +86,12 @@ public class LubanRpcServer implements Endpoint,RpcServer {
             serviceMeta.setWeight(weight);
             serviceMeta.setVersion(version);
 
-            String serviceNameUnique = String.format("%s-%s-%s",group,serviceName,version);
-            Object currentService = serviceContainer.get(serviceNameUnique);
+            String serviceNameUnique = completeServiceName(group,serviceName,version);
+            Object currentService = rpcProviderService.getPublishObject(serviceNameUnique);
             if(currentService != null){
                 throw new ServiceHasMultiInstantiationException(String.format("%s has more than one Instantiation"));
             }
-            serviceContainer.put(serviceNameUnique,o);
+            rpcProviderService.publishObject(serviceNameUnique,o);
 
             serviceMetaList.add(serviceMeta);
         }

@@ -17,4 +17,15 @@ public class LubanCommon {
 
     public static String DEFAULT_VERSION = "1.0.0";
 
+    public static long DEFAULT_INVOKE_TIME_OUT = 5000;
+
+
+    public static String completeServiceName(String group,String serviceName,String version){
+        return String.format("/%s/%s/%s",group,serviceName,version);
+    }
+
+    public static String declareMethodName(String serviceName,String methodName){
+        return String.format("%s.%s",serviceName,methodName);
+    }
+
 }

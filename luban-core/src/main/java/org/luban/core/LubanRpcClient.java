@@ -1,11 +1,26 @@
 package org.luban.core;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import org.luban.Endpoint;
+import org.luban.exception.NoFoundRpcServiceProviderException;
+import org.luban.exception.RpcInvokeTimeoutException;
+import org.luban.loadbalance.DefaultLoadBalance;
+import org.luban.loadbalance.LoadBalance;
 import org.luban.registry.RegistryService;
 import org.luban.registry.SubscribeMeta;
+import org.luban.registry.SubscribeResult;
 import org.luban.registry.zookeeper.ZookeeperRegistryService;
 import org.luban.rpc.RpcRequest;
+import org.luban.rpc.RpcResponse;
 import org.luban.transports.LubanRpcNettyClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static org.luban.constant.LubanCommon.DEFAULT_INVOKE_TIME_OUT;
 
 
 /**
@@ -15,11 +30,15 @@ import org.luban.transports.LubanRpcNettyClient;
 public class LubanRpcClient implements Endpoint {
 
 
+    private Logger logger = LoggerFactory.getLogger(LubanRpcClient.class);
+
     private LubanRpcNettyClient lubanRpcNettyClient;
 
     private RegistryService registryService;
 
     private String registryAddress;
+
+    private long timeoutMillis = DEFAULT_INVOKE_TIME_OUT;
 
     public LubanRpcClient(String registryAddress){
         this.registryAddress = registryAddress;
@@ -36,22 +55,48 @@ public class LubanRpcClient implements Endpoint {
 
     }
 
-    public Object entranceInvoke(RpcRequest rpcRequest) throws Exception {
+    public RpcResponse entranceInvoke(RpcRequest rpcRequest) throws Exception {
 
         SubscribeMeta subscribeMeta = buildSubscribeMeta(rpcRequest);
 
         registryService.subscribeService(subscribeMeta);
 
-        registryService.getSubscribeResult(subscribeMeta);
+        List<SubscribeResult> subscribeResult = registryService.getSubscribeResult(subscribeMeta);
+        if(subscribeResult == null || subscribeResult.size() == 0){
+            throw new NoFoundRpcServiceProviderException();
+        }
 
-        return null;
+        List<SubscribeResult.ServiceEndpoint> serviceEndpoints = subscribeResult.stream().map(eachSubscribeResult -> eachSubscribeResult.getServiceEndpoint()).collect(toList());
 
+        LoadBalance loadBalance = new DefaultLoadBalance();
+
+        String url = loadBalance.select(serviceEndpoints);
+
+        RpcInvokeFuture rpcInvokeFuture = new RpcInvokeFuture(rpcRequest.getRequestId());
+        lubanRpcNettyClient.putCurrentInvokeFuture(rpcInvokeFuture.getRequestId(),rpcInvokeFuture);
+
+        Channel availableChannel = lubanRpcNettyClient.getAvailableChannel(url);
+        availableChannel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) channelFuture -> {
+            if(!channelFuture.isSuccess()){
+                logger.error("requestId {} send failed",rpcInvokeFuture.getRequestId(),channelFuture.cause());
+                lubanRpcNettyClient.removeCurrentInvokeFuture(rpcInvokeFuture.getRequestId());
+                rpcInvokeFuture.putRpcResponse(RpcResponse.errorResponse(rpcInvokeFuture.getRequestId(),channelFuture.cause()));
+            }
+        });
+
+        RpcResponse rpcResponse = rpcInvokeFuture.waitResponse(timeoutMillis);
+        if(null == rpcResponse){
+            logger.warn("requestId {} request invoke timeout",rpcInvokeFuture.getRequestId());
+            lubanRpcNettyClient.removeCurrentInvokeFuture(rpcInvokeFuture.getRequestId());
+            rpcResponse = RpcResponse.errorResponse(rpcInvokeFuture.getRequestId(),new RpcInvokeTimeoutException());
+        }
+
+        return rpcResponse;
     }
 
-    public Object invokeSync(String host,int port,RpcRequest request,int timeoutMillis){
-        return lubanRpcNettyClient.invokeSync(host,port,request,timeoutMillis);
+    public void setTimeoutMillis(long timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
     }
-
 
     public void shutdown() {
         lubanRpcNettyClient.shutdown();

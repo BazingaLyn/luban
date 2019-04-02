@@ -7,8 +7,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.luban.Endpoint;
-import org.luban.transports.decoder.RpcDecoder;
-import org.luban.transports.encoder.RpcEncoder;
+import org.luban.core.RpcProviderService;
+import org.luban.transports.codec.RpcCodec;
 import org.luban.transports.handler.RpcServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +26,13 @@ public class LubanRpcNettyServer implements Endpoint {
     private ServerBootstrap serverBootstrap;
     private EventLoopGroup boss;
     private EventLoopGroup worker;
+    private RpcProviderService rpcProviderService;
 
     private int workerNum = Runtime.getRuntime().availableProcessors() << 1;
 
-    public LubanRpcNettyServer(int port){
+    public LubanRpcNettyServer(int port, RpcProviderService rpcProviderService){
         this.port = port;
+        this.rpcProviderService = rpcProviderService;
         init();
     }
 
@@ -50,9 +52,8 @@ public class LubanRpcNettyServer implements Endpoint {
         serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new RpcEncoder());
-                ch.pipeline().addLast(new RpcDecoder());
-                ch.pipeline().addLast(new RpcServerHandler());
+                ch.pipeline().addLast(new RpcCodec());
+                ch.pipeline().addLast(new RpcServerHandler(rpcProviderService));
             }
         });
         try {

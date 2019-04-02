@@ -2,7 +2,7 @@ package org.luban;
 
 import org.luban.core.LubanRpcClient;
 import org.luban.core.RpcInvoke;
-import org.luban.transports.LubanRpcNettyClient;
+import org.luban.core.RpcInvokeContext;
 
 /**
  * @author liguolin
@@ -11,10 +11,12 @@ import org.luban.transports.LubanRpcNettyClient;
 public class DefaultRpcProxy<I> implements RpcProxy<I> {
 
 
-
     private Class<I> interfaceClass;
 
     private LubanRpcClient lubanRpcClient;
+
+    private RpcInvokeContext rpcInvokeContext;
+
 
     public DefaultRpcProxy(Class<I> interfaceClass){
         this.interfaceClass = interfaceClass;
@@ -25,11 +27,15 @@ public class DefaultRpcProxy<I> implements RpcProxy<I> {
         return factory;
     }
 
-    public DefaultRpcProxy rpcClient(LubanRpcClient lubanRpcClient){
+    public DefaultRpcProxy<I> rpcClient(LubanRpcClient lubanRpcClient){
         this.lubanRpcClient = lubanRpcClient;
         return this;
     }
 
+    public DefaultRpcProxy<I> rpcInvokeContext(RpcInvokeContext rpcInvokeContext){
+        this.rpcInvokeContext = rpcInvokeContext;
+        return this;
+    }
 
     @Override
     public Class<I> getDefaultClass() {
@@ -38,16 +44,7 @@ public class DefaultRpcProxy<I> implements RpcProxy<I> {
 
     @Override
     public Object createHandler() {
-        return new RpcInvoke(lubanRpcClient);
+        return new RpcInvoke(lubanRpcClient,rpcInvokeContext);
     }
-
-
-//    private static class DefaultRpcProxyInstance {
-//        private static final DefaultRpcProxy instance = new DefaultRpcProxy();
-//    }
-
-//    public static DefaultRpcProxy getInstance(){
-//        return DefaultRpcProxyInstance.instance;
-//    }
 
 }

@@ -13,6 +13,13 @@ public class RpcResponse {
 
     private Throwable throwable;
 
+    public static RpcResponse errorResponse(long requestId,Throwable cause) {
+        RpcResponse rpcResponse = new RpcResponse();
+        rpcResponse.setId(requestId);
+        rpcResponse.setThrowable(cause);
+        return rpcResponse;
+    }
+
     public long getId() {
         return id;
     }

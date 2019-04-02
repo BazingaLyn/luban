@@ -132,8 +132,6 @@ public class ZookeeperRegistryService implements RegistryService {
         Boolean hasRegistryZkListener = hasRegistryZkListeners.get(serviceParentPath);
         if(hasRegistryZkListener == null || !hasRegistryZkListener){
 
-            System.out.println("注册注册注册");
-
             hasRegistryZkListeners.put(serviceParentPath,true);
 
             PathChildrenCache childrenCache = new PathChildrenCache(client, serviceParentPath, true);
