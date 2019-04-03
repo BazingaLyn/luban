@@ -12,7 +12,7 @@ import java.util.List;
  * @create 2018-11-21 19:24
  **/
 @ChannelHandler.Sharable
-public class RpcDecoder extends ReplayingDecoder {
+public class DefaultRpcDecoder extends ReplayingDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {

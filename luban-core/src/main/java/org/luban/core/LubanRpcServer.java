@@ -8,6 +8,7 @@ import org.luban.registry.RegistryService;
 import org.luban.registry.ServiceMeta;
 import org.luban.registry.zookeeper.ZookeeperRegistryService;
 import org.luban.transports.LubanRpcNettyServer;
+import org.luban.transports.config.DefaultNettyTransportConfig;
 import org.luban.utils.NetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class LubanRpcServer implements Endpoint,RpcServer {
         this.ip = NetUtil.getLocalAddress();
         registryService = new ZookeeperRegistryService(this.registryAddress);
         rpcProviderService = new RpcProviderService();
-        lubanRpcNettyServer = new LubanRpcNettyServer(serverPort,rpcProviderService);
+        lubanRpcNettyServer = new LubanRpcNettyServer(serverPort,rpcProviderService,new DefaultNettyTransportConfig());
     }
 
     public void start() {

@@ -14,6 +14,7 @@ import org.luban.registry.zookeeper.ZookeeperRegistryService;
 import org.luban.rpc.RpcRequest;
 import org.luban.rpc.RpcResponse;
 import org.luban.transports.LubanRpcNettyClient;
+import org.luban.transports.config.DefaultNettyTransportConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class LubanRpcClient implements Endpoint {
 
 
     public void init() {
-        lubanRpcNettyClient = new LubanRpcNettyClient();
+        lubanRpcNettyClient = new LubanRpcNettyClient(new DefaultNettyTransportConfig());
         this.registryService = new ZookeeperRegistryService(registryAddress);
     }
 

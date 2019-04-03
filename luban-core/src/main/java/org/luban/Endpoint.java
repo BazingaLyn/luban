@@ -1,5 +1,7 @@
 package org.luban;
 
+import org.luban.utils.NativeSupport;
+
 public interface Endpoint {
 
     void init();
@@ -7,4 +9,8 @@ public interface Endpoint {
     void start();
 
     void shutdown();
+
+    default boolean isNativeEt() {
+        return NativeSupport.isSupportNativeET();
+    }
 }

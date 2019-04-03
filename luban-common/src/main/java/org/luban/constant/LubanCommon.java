@@ -19,6 +19,10 @@ public class LubanCommon {
 
     public static long DEFAULT_INVOKE_TIME_OUT = 5000;
 
+    public static long DEFAULT_CREATE_CHANNEL_LOCK_TIME = 3000;
+
+    public static int DEFAULT_CONNECT_TIMEOUT_MILLIS = 2000;
+
 
     public static String completeServiceName(String group,String serviceName,String version){
         return String.format("/%s/%s/%s",group,serviceName,version);
